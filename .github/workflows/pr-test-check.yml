@@ -18,7 +18,7 @@ jobs:
       - name: Get changed Go files
         id: changed-files
         run: |
-          changed_files=$(git diff --name-only HEAD~1 | grep -E '\.go$' | grep -v '_test\.go$')
+          changed_files=$(git diff --name-only HEAD~1 | grep -E '\.go$' | grep -v '_test\.go$' || true)
           if [[ -n "$changed_files" ]]; then
             echo "changed_files=$changed_files" >> $GITHUB_OUTPUT
           fi
