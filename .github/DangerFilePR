@@ -15,7 +15,7 @@ modified_files.each do |file|
   test_file = get_test_file(file)
   next unless test_file
 
-  unless modified_files.include?(test_file) || all_files.include?(test_file)
+  unless modified_files.include?(test_file)
     warn("Missing test file: #{test_file} for #{file}")
   end
 end
