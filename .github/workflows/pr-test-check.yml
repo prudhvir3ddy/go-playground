@@ -19,21 +19,22 @@ jobs:
         id: changed-files
         run: |
           changed_files=$(git diff --name-only HEAD~1 | grep -E '\.go$' | grep -v '_test\.go$')
-          echo "changed_files=$changed_files" >> $GITHUB_OUTPUT
-
+          if [[ -n "$changed_files" ]]; then
+            echo "changed_files=$changed_files" >> $GITHUB_OUTPUT
+          fi
+      
       - name: Check for missing tests
         if: ${{ steps.changed-files.outputs.changed_files != '' }}
         run: |
           changed_files="${{ steps.changed-files.outputs.changed_files }}"
           IFS=$'\n'
           for file in $changed_files; do
-            test_file="${file/_test.go/.go}" #creates the test file name.
             test_file="${file/.go/_test.go}"
             if [[ ! -f "$test_file" ]]; then
               echo "::warning::Go file $file changed, but no corresponding test file $test_file found."
-              exit 1 # Fail the action.
+              exit 1
             elif ! git diff --name-only HEAD~1 | grep -q "${test_file}"; then
               echo "::warning::Go file $file changed, but corresponding test file $test_file not changed."
-              exit 1 # Fail the action.
+              exit 1
             fi
           done
